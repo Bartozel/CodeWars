@@ -46,13 +46,13 @@ namespace CodeWars
             int actualIndex = 0;
             int row = 0;
             int column = 0;
+
             for (int i = 0; i < array.Length; i++)
             {
                 for (var j = 0; j < array[i].Length; j++)
                 {
                     int value = array[row][column];
                     result.Add(value);
-
                     actualIndex++;
 
                     if (actualIndex == indexesInOneDirection)
