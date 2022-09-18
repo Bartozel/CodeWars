@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 /* 
  * https://www.codewars.com/kata/523a86aa4230ebb5420001e1/train/csharp
@@ -26,15 +27,47 @@ using System.Collections.Generic;
  * For Go: Empty string slice is expected when there are no anagrams found.
 */
 
+/*Best praktice solution
+    public static List<string> Anagrams(string word, List<string> words)
+    {
+        var pattern = word.OrderBy(p => p).ToArray();
+        return words.Where(item => item.OrderBy(p => p).SequenceEqual(pattern)).ToList();
+    }
+*/
+
 namespace CodeWars
 {
-    public static class Anagram 
+    public static class Anagram
     {
         public static void Test()
         {
-            Anagrams("abba", new[] { "aabb", "abcd", "bbaa", "dada" }.ToList()).ConsolePrint();
-            Anagrams("racer", new[] { "crazer", "carer", "racar", "caers", "racer" }.ToList()).ConsolePrint();
-            Anagrams("laser", new[] { "lazing", "lazy", "lacer" }.ToList()).ConsolePrint();
+            string result = "{0}. Result={1}";
+
+            var time = new Stopwatch();
+            time.Start();
+            for (int i = 0; i < 10; i++)
+            {
+                Anagrams("abba", new[] { "aabb", "abcd", "bbaa", "dada" }.ToList()).ConsolePrint();
+                Anagrams("racer", new[] { "crazer", "carer", "racar", "caers", "racer" }.ToList()).ConsolePrint();
+                Anagrams("laser", new[] { "lazing", "lazy", "lacer" }.ToList()).ConsolePrint();
+            }
+            time.Stop();
+            var result1 = time.ElapsedMilliseconds.ToString();
+
+            time.Reset();
+            time.Start();
+            for (int i = 0; i < 10; i++)
+            {
+                Anagrams1("abba", new[] { "aabb", "abcd", "bbaa", "dada" }.ToList()).ConsolePrint();
+                Anagrams1("racer", new[] { "crazer", "carer", "racar", "caers", "racer" }.ToList()).ConsolePrint();
+                Anagrams1("laser", new[] { "lazing", "lazy", "lacer" }.ToList()).ConsolePrint();
+            }
+            time.Stop();
+            var result2 = time.ElapsedMilliseconds.ToString();
+
+            Console.WriteLine(string.Format(result, new[] { "1", result1 }));
+            Console.WriteLine(string.Format(result, new[] { "2", result2 }));
+
 
         }
 
@@ -48,24 +81,20 @@ namespace CodeWars
                 if (Enumerable.SequenceEqual(wordOcurences, wOcurences))
                     ans.Add(w);
             }
-
             return ans;
         }
 
-        public static IEnumerable<(char Char, int Count)> GetCharOcurences(string word)
+        public static IEnumerable<char> GetCharOcurences(string word)
         {
-            IEnumerable<(char Char, int Count)> result;
-            if (!string.IsNullOrEmpty(word))
-            {
-                result = word.GroupBy(c => c)
-                    .Select(c => (Char: c.Key, Count: c.Count()))
-                    .OrderBy(x=>x.Char);
-            }
-            else
-                result = new List<(char Char, int Count)>();
-
+            IEnumerable<char> result = word.OrderBy(x => x).AsEnumerable();
 
             return result;
+        }
+
+        public static List<string> Anagrams1(string word, List<string> words)
+        {
+            var pattern = word.OrderBy(p => p).ToArray();
+            return words.Where(item => item.OrderBy(p => p).SequenceEqual(pattern)).ToList();
         }
     }
 }
